@@ -1,6 +1,6 @@
 # SGD Construction - Management Construction System
 
-Sistem Manajemen Konstruksi profesional untuk **PT. Sarana Gumelar Digdaya** (Sunggarti Corporation). Aplikasi ini dirancang untuk memantau RAB, Invoice, Logistik, Arus Kas, dan Progress Lapangan secara terintegrasi.
+Sistem Manajemen Konstruksi profesional untuk **PT Sunggiarti Corporation**. Aplikasi ini dirancang untuk memantau RAB, Invoice, Logistik, Arus Kas, dan Progress Lapangan secara terintegrasi.
 
 ## 🚀 Fitur Utama
 - **Dashboard Eksekutif**: Ringkasan progress fisik dan finansial proyek.
@@ -53,4 +53,4 @@ src/
 ```
 
 ## 📄 Lisensi
-© 2026 PT. Sarana Gumelar Digdaya (Sunggarti Corporation). Seluruh hak cipta dilindungi undang-undang.
+© 2026 PT Sunggiarti Corporation. Seluruh hak cipta dilindungi undang-undang.

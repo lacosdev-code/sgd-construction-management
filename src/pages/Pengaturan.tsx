@@ -42,8 +42,8 @@ export default function PengaturanPage() {
           </button>
         </div>
 
-        <h3 className="text-white font-black text-2xl mt-6 text-center">PT. Sarana Gumelar Digdaya</h3>
-        <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em] mt-1">Sunggarti Corporation Group</p>
+        <h3 className="text-white font-black text-2xl mt-6 text-center">PT Sunggiarti Corporation</h3>
+        <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em] mt-1">Leading Construction Group</p>
       </div>
 
       {/* Info Form */}
@@ -56,11 +56,11 @@ export default function PengaturanPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-1">
             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Nama Perusahaan</label>
-            <input type="text" defaultValue="PT. Sarana Gumelar Digdaya" className="w-full bg-gray-800/50 border border-gray-700/50 rounded-2xl px-4 py-3.5 text-white text-sm focus:ring-2 focus:ring-green-500 outline-none transition-all" />
+            <input type="text" defaultValue="PT Sunggiarti Corporation" className="w-full bg-gray-800/50 border border-gray-700/50 rounded-2xl px-4 py-3.5 text-white text-sm focus:ring-2 focus:ring-green-500 outline-none transition-all" />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Nama Group / Holding</label>
-            <input type="text" defaultValue="Sunggarti Corporation" className="w-full bg-gray-800/50 border border-gray-700/50 rounded-2xl px-4 py-3.5 text-white text-sm focus:ring-2 focus:ring-green-500 outline-none transition-all" />
+            <input type="text" defaultValue="Sunggiarti Group" className="w-full bg-gray-800/50 border border-gray-700/50 rounded-2xl px-4 py-3.5 text-white text-sm focus:ring-2 focus:ring-green-500 outline-none transition-all" />
           </div>
         </div>
 

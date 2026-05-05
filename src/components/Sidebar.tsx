@@ -110,9 +110,9 @@ export default function Sidebar({ activePage, setActivePage, activeProyek, setAc
             </motion.div>
             <div>
               <div className="text-white font-extrabold text-xs leading-tight tracking-tight uppercase">
-                PT. Sarana <span className="text-amber-400 block">Gumelar Digdaya</span>
+                PT Sunggiarti <span className="text-amber-400 block">Corporation</span>
               </div>
-              <div className="text-gray-500 text-[8px] font-black tracking-[0.2em] uppercase mt-1">Sunggarti Corporation</div>
+              <div className="text-gray-500 text-[8px] font-black tracking-[0.2em] uppercase mt-1">Construction Management</div>
             </div>
           </div>
           <button onClick={onClose} className="lg:hidden text-gray-400 hover:text-white p-1">
@@ -198,7 +198,7 @@ export default function Sidebar({ activePage, setActivePage, activeProyek, setAc
 
         {/* Footer info */}
         <div className="p-4 border-t border-gray-800/50">
-          <p className="text-gray-600 text-[8px] font-bold uppercase tracking-[0.2em] text-center">© 2026 PT Sunggarti Corp</p>
+          <p className="text-gray-600 text-[8px] font-bold uppercase tracking-[0.2em] text-center">© 2026 PT Sunggiarti Corp</p>
         </div>
       </div>
     </>
