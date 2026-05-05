@@ -101,6 +101,28 @@ export default function PengaturanPage() {
         </div>
       </div>
 
+      {/* Danger Zone */}
+      <div className="bg-red-900/10 border border-red-900/20 rounded-[2rem] p-6">
+        <h4 className="text-red-500 font-black text-[10px] uppercase tracking-[0.2em] mb-4">Zona Bahaya</h4>
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-white font-bold text-sm">Reset Seluruh Data</p>
+            <p className="text-gray-500 text-[10px] mt-1">Hapus semua inputan dan kembalikan ke data awal (Dummy).</p>
+          </div>
+          <button 
+            onClick={() => {
+              if (window.confirm('PERINGATAN: Seluruh data yang Anda masukkan akan dihapus permanen. Lanjutkan?')) {
+                localStorage.clear();
+                window.location.reload();
+              }
+            }}
+            className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+          >
+            Reset App Data
+          </button>
+        </div>
+      </div>
+
       {/* Save Button */}
       <div className="fixed bottom-6 left-0 right-0 px-4 flex justify-center z-30 lg:left-72">
         <motion.button

@@ -26,10 +26,46 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Global Data State
-  const [proyekData, setProyekData] = useState<Proyek[]>(initialProyekList);
-  const [itemData, setItemData] = useState<ItemPekerjaan[]>(initialItemList);
-  const [invoiceData, setInvoiceData] = useState<Invoice[]>(initialInvoiceList);
-  const [keuanganData, setKeuanganData] = useState<Keuangan[]>(initialKeuanganList);
+  // State dengan Try-Catch untuk mencegah crash jika localStorage korup
+  const [proyekData, setProyekData] = useState<Proyek[]>(() => {
+    try {
+      const saved = localStorage.getItem('proyekData');
+      return saved ? JSON.parse(saved) : initialProyekList;
+    } catch (e) {
+      console.error("Error loading proyekData:", e);
+      return initialProyekList;
+    }
+  });
+
+  const [itemData, setItemData] = useState<ItemPekerjaan[]>(() => {
+    try {
+      const saved = localStorage.getItem('itemData');
+      return saved ? JSON.parse(saved) : initialItemList;
+    } catch (e) {
+      console.error("Error loading itemData:", e);
+      return initialItemList;
+    }
+  });
+
+  const [invoiceData, setInvoiceData] = useState<Invoice[]>(() => {
+    try {
+      const saved = localStorage.getItem('invoiceData');
+      return saved ? JSON.parse(saved) : initialInvoiceList;
+    } catch (e) {
+      console.error("Error loading invoiceData:", e);
+      return initialInvoiceList;
+    }
+  });
+
+  const [keuanganData, setKeuanganData] = useState<Keuangan[]>(() => {
+    try {
+      const saved = localStorage.getItem('keuanganData');
+      return saved ? JSON.parse(saved) : initialKeuanganList;
+    } catch (e) {
+      console.error("Error loading keuanganData:", e);
+      return initialKeuanganList;
+    }
+  });
 
   // --- CRUD Functions for Items ---
   const addItem = (item: Omit<ItemPekerjaan, 'id'>) => {
@@ -69,10 +105,27 @@ function App() {
     setInvoiceData(invoiceData.map(i => i.id === updatedInvoice.id ? updatedInvoice : i));
   };
   const deleteInvoice = (id: number) => {
-    if (window.confirm('Hapus invoice ini?')) {
+    if (window.confirm('Apakah Anda yakin ingin menghapus invoice ini?')) {
       setInvoiceData(invoiceData.filter(i => i.id !== id));
     }
   };
+
+  // --- Persistence Effects ---
+  useEffect(() => {
+    localStorage.setItem('proyekData', JSON.stringify(proyekData));
+  }, [proyekData]);
+
+  useEffect(() => {
+    localStorage.setItem('itemData', JSON.stringify(itemData));
+  }, [itemData]);
+
+  useEffect(() => {
+    localStorage.setItem('invoiceData', JSON.stringify(invoiceData));
+  }, [invoiceData]);
+
+  useEffect(() => {
+    localStorage.setItem('keuanganData', JSON.stringify(keuanganData));
+  }, [keuanganData]);
 
   const renderPage = () => {
     // Handle construction categories by showing RekapRAB pre-filtered
