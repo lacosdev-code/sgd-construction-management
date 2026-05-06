@@ -10,7 +10,8 @@ import {
   Package,
   CheckSquare,
   Wallet,
-  Clock
+  Clock,
+  MapPin
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { proyekList } from '../data/mockData';
