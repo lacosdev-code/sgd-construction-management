@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Plus, Search, Edit3, Trash2, X, Tag } from 'lucide-react';
+import { Plus, Search, Edit3, Trash2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatRupiahFull } from '../utils/format';
 
@@ -117,7 +117,7 @@ export default function MasterHarga() {
           <div className="col-span-6 p-4">Nama Material / Upah</div>
           <div className="col-span-3 p-4 text-right">Harga Satuan</div>
         </div>
-        {filtered.map((m, i) => (
+        {filtered.map((m) => (
           <motion.div 
             key={m.id}
             initial={{ opacity: 0 }}

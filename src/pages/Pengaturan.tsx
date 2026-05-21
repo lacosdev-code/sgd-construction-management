@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Building2, Phone, Mail, MapPin, Globe, Save, HardHat, Camera, Check } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Building2, Phone, Mail, Save, Camera, Check } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function PengaturanPage() {
   const [isSaving, setIsSaving] = useState(false);

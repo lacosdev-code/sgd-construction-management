@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Plus, Building2, MapPin, Calendar, DollarSign, Edit3, Trash2, ChevronRight, X } from 'lucide-react';
+import { Plus, Building2, MapPin, Edit3, Trash2, ChevronRight, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Proyek } from '../types';
-import { formatRupiahFull, formatDate } from '../utils/format';
+import { formatRupiahFull } from '../utils/format';
 import Tooltip from '../components/Tooltip';
 
 interface DataProyekProps {

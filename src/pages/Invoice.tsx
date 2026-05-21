@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Plus, Eye, Download, CheckCircle, XCircle, Clock, Trash2, Edit3, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Invoice, proyekList } from '../data/mockData';
+import { proyekList } from '../data/mockData';
+import { Invoice } from '../types';
 import { formatRupiahFull, formatDate } from '../utils/format';
 
 interface InvoiceProps {
@@ -15,6 +16,7 @@ interface InvoiceProps {
 export default function InvoicePage({ proyekId, invoiceData, onAdd, onUpdate, onDelete }: InvoiceProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
+  const [selectedPreviewInvoice, setSelectedPreviewInvoice] = useState<Invoice | null>(null);
   
   const proyek = proyekList.find(p => p.id === proyekId) || proyekList[0];
   const invoices = invoiceData.filter(i => i.proyekId === proyekId);
@@ -66,6 +68,34 @@ export default function InvoicePage({ proyekId, invoiceData, onAdd, onUpdate, on
     if (s === 'lunas') return <CheckCircle size={14} />;
     if (s === 'belum_lunas') return <XCircle size={14} />;
     return <Clock size={14} />;
+  };
+
+  const handleExportSingleInvoice = (inv: Invoice) => {
+    const subtotal = inv.jumlah / 1.11;
+    const ppn = inv.jumlah - subtotal;
+    
+    const headers = ["Deskripsi", "Nilai (Rp)"];
+    const rows = [
+      ["Nomor Invoice", inv.nomorInvoice],
+      ["Tanggal", formatDate(inv.tanggal)],
+      ["Proyek", proyek.nama],
+      ["Penerima", inv.penerima],
+      ["Perihal / Uraian", inv.perihal],
+      ["Status", inv.status.toUpperCase()],
+      ["Subtotal (DPP)", Math.round(subtotal)],
+      ["PPN 11%", Math.round(ppn)],
+      ["Total Pembayaran", inv.jumlah]
+    ];
+
+    const csvString = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Invoice_${inv.nomorInvoice.replace(/\//g, '_')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -145,8 +175,20 @@ export default function InvoicePage({ proyekId, invoiceData, onAdd, onUpdate, on
               <div className="flex justify-between items-center bg-gray-950/50 p-3 rounded-2xl border border-gray-800/50">
                 <p className="text-white font-black text-lg tracking-tight">{formatRupiahFull(inv.jumlah)}</p>
                 <div className="flex gap-2">
-                  <button className="p-2 rounded-lg bg-gray-800 text-gray-500 hover:text-white transition-all"><Eye size={16} /></button>
-                  <button className="p-2 rounded-lg bg-gray-800 text-gray-500 hover:text-white transition-all"><Download size={16} /></button>
+                  <button 
+                    onClick={() => setSelectedPreviewInvoice(inv)}
+                    title="Pratinjau Invoice"
+                    className="p-2 rounded-lg bg-gray-800 text-gray-500 hover:text-white transition-all"
+                  >
+                    <Eye size={16} />
+                  </button>
+                  <button 
+                    onClick={() => handleExportSingleInvoice(inv)}
+                    title="Unduh CSV"
+                    className="p-2 rounded-lg bg-gray-800 text-gray-500 hover:text-white transition-all"
+                  >
+                    <Download size={16} />
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -201,6 +243,135 @@ export default function InvoicePage({ proyekId, invoiceData, onAdd, onUpdate, on
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* PREVIEW INVOICE MODAL */}
+      <AnimatePresence>
+        {selectedPreviewInvoice && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="absolute inset-0 bg-black/85 backdrop-blur-md" 
+              onClick={() => setSelectedPreviewInvoice(null)} 
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }} 
+              animate={{ scale: 1, opacity: 1, y: 0 }} 
+              exit={{ scale: 0.9, opacity: 0, y: 20 }} 
+              className="bg-white text-gray-900 w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl relative z-10 p-8 md:p-10 font-sans"
+            >
+              {/* Close button */}
+              <button 
+                onClick={() => setSelectedPreviewInvoice(null)} 
+                className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 transition-colors p-1"
+              >
+                <X size={24} />
+              </button>
+
+              {/* Letterhead */}
+              <div className="flex justify-between items-start border-b-2 border-gray-100 pb-6 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-950 p-1 flex-shrink-0 flex items-center justify-center">
+                    <img
+                      src="https://ik.imagekit.io/Sgd/Logo%20Potrait.png?updatedAt=1771273586419"
+                      alt="SGD Logo"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <h2 className="font-black text-sm md:text-base tracking-tight leading-tight text-gray-950 uppercase">
+                      PT SUNGGIARTI CORPORATION
+                    </h2>
+                    <p className="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Management Construction System</p>
+                    <p className="text-[9px] text-gray-400 font-medium mt-1">Jl. Bypass Ngurah Rai No. 123, Denpasar, Bali</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <h1 className="text-gray-950 font-black text-xl md:text-2xl tracking-widest uppercase">INVOICE</h1>
+                  <p className="text-gray-500 font-mono text-xs tracking-wider mt-1">{selectedPreviewInvoice.nomorInvoice}</p>
+                </div>
+              </div>
+
+              {/* Details Grid */}
+              <div className="grid grid-cols-2 gap-6 mb-8 text-xs">
+                <div>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Ditagihkan Kepada:</p>
+                  <p className="font-extrabold text-gray-900 uppercase text-sm">{selectedPreviewInvoice.penerima}</p>
+                  <p className="text-gray-500 font-semibold mt-1">Mitra Proyek: {proyek.nama}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Detail Pengiriman:</p>
+                  <p className="text-gray-700"><span className="font-bold text-gray-900">Tanggal Terbit:</span> {formatDate(selectedPreviewInvoice.tanggal)}</p>
+                  <p className="text-gray-700 mt-1"><span className="font-bold text-gray-900">Mata Uang:</span> IDR (Rupiah)</p>
+                </div>
+              </div>
+
+              {/* Items Table */}
+              <div className="border border-gray-150 rounded-2xl overflow-hidden mb-8 text-xs">
+                <div className="grid grid-cols-12 bg-gray-50 p-4 font-black text-gray-500 uppercase tracking-widest text-[9px] border-b border-gray-150">
+                  <div className="col-span-8">Deskripsi Tagihan / Termin</div>
+                  <div className="col-span-4 text-right">Jumlah (Rp)</div>
+                </div>
+                <div className="grid grid-cols-12 p-4 border-b border-gray-100 items-center">
+                  <div className="col-span-8 font-bold text-gray-800 leading-normal">{selectedPreviewInvoice.perihal}</div>
+                  <div className="col-span-4 text-right font-mono font-bold text-gray-900">{formatRupiahFull(selectedPreviewInvoice.jumlah / 1.11).replace('Rp', '')}</div>
+                </div>
+                
+                {/* Calculation details */}
+                <div className="bg-gray-50/50 p-4 space-y-2 border-t border-gray-100 font-semibold text-gray-600">
+                  <div className="flex justify-between">
+                    <span>Subtotal (DPP)</span>
+                    <span className="font-mono">{formatRupiahFull(selectedPreviewInvoice.jumlah / 1.11).replace('Rp', '')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>PPN (11%)</span>
+                    <span className="font-mono">{formatRupiahFull(selectedPreviewInvoice.jumlah - (selectedPreviewInvoice.jumlah / 1.11)).replace('Rp', '')}</span>
+                  </div>
+                  <div className="h-px bg-gray-200 my-2" />
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total Tagihan Bersih</span>
+                      <p className="text-gray-950 text-xl font-black tracking-tight mt-0.5">{formatRupiahFull(selectedPreviewInvoice.jumlah)}</p>
+                    </div>
+                    <div className="relative">
+                      {/* Glassmorphic Stamp */}
+                      {selectedPreviewInvoice.status === 'lunas' ? (
+                        <div className="border-4 border-green-500 text-green-500 font-black rounded-xl px-4 py-2 uppercase tracking-[0.25em] text-[10px] transform -rotate-12 select-none shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+                          LUNAS / PAID
+                        </div>
+                      ) : selectedPreviewInvoice.status === 'sebagian' ? (
+                        <div className="border-4 border-amber-500 text-amber-500 font-black rounded-xl px-4 py-2 uppercase tracking-[0.25em] text-[10px] transform -rotate-12 select-none">
+                          SEBAGIAN
+                        </div>
+                      ) : (
+                        <div className="border-4 border-red-500 text-red-500 font-black rounded-xl px-4 py-2 uppercase tracking-[0.25em] text-[10px] transform -rotate-12 select-none">
+                          PENDING
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Signature Area */}
+              <div className="flex justify-between items-end mt-12 text-xs">
+                <div className="text-gray-500 max-w-xs leading-relaxed">
+                  <span className="font-bold text-gray-700 block mb-1">Catatan Pembayaran:</span>
+                  Transfer ke Bank Mandiri Cab. Denpasar<br />
+                  No. Rekening: <span className="font-bold text-gray-800">145-0012-345-678</span><br />
+                  a/n <span className="font-bold text-gray-800">PT SUNGGIARTI CORPORATION</span>
+                </div>
+                <div className="text-center font-bold relative pb-2 pr-6">
+                  <p className="text-gray-500 mb-16">Hormat Kami,</p>
+                  <p className="text-gray-950 uppercase border-b border-gray-300 pb-1">Ni Wayan Sunggiarti</p>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1">Direktur Utama</p>
+                </div>
+              </div>
             </motion.div>
           </div>
         )}

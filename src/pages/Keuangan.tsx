@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Plus, Wallet, TrendingUp, TrendingDown, Trash2, Edit3, X, Calendar } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, Trash2, Edit3, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatRupiahFull, formatDate } from '../utils/format';
 

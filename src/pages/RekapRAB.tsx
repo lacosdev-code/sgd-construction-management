@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Download, Printer, Edit3, ChevronDown, ChevronUp, X, Plus, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ItemPekerjaan, proyekList } from '../data/mockData';
+import { proyekList } from '../data/mockData';
+import { ItemPekerjaan } from '../types';
 import { formatRupiahFull } from '../utils/format';
 
 interface RekapRABProps {
@@ -105,6 +106,35 @@ export default function RekapRAB({ proyekId, itemData, onAdd, onUpdate, onDelete
     setIsModalOpen(false);
   };
 
+  const handleExportCSV = () => {
+    if (items.length === 0) {
+      alert("Tidak ada data untuk diekspor.");
+      return;
+    }
+    const headers = ["No", "Kategori", "Sub Kategori", "Uraian Pekerjaan", "Volume", "Satuan", "Harga Satuan (Rp)", "Total Harga (Rp)", "Progress (%)"];
+    const rows = items.map((item, index) => [
+      index + 1,
+      item.kategori,
+      item.subKategori,
+      `"${item.uraian.replace(/"/g, '""')}"`,
+      item.volume,
+      item.satuan,
+      item.hargaSatuan,
+      item.totalHarga,
+      item.progress
+    ]);
+
+    const csvString = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `RAB_${proyek.nama.replace(/\s+/g, '_')}_${filterCategory || 'Semua'}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="p-4 space-y-4 max-w-4xl mx-auto">
       {/* Header Info */}
@@ -131,10 +161,18 @@ export default function RekapRAB({ proyekId, itemData, onAdd, onUpdate, onDelete
       {/* Action Buttons */}
       <div className="flex justify-between items-center bg-gray-900/50 p-2 rounded-2xl border border-gray-800/50">
         <div className="flex gap-2">
-          <button className="p-2 rounded-xl bg-gray-800 text-gray-400 hover:text-white transition-all border border-gray-700/50">
+          <button 
+            onClick={handleExportCSV}
+            title="Ekspor ke CSV"
+            className="p-2 rounded-xl bg-gray-800 text-gray-400 hover:text-white transition-all border border-gray-700/50"
+          >
             <Download size={18} />
           </button>
-          <button className="p-2 rounded-xl bg-gray-800 text-gray-400 hover:text-white transition-all border border-gray-700/50">
+          <button 
+            onClick={() => window.print()}
+            title="Cetak RAB"
+            className="p-2 rounded-xl bg-gray-800 text-gray-400 hover:text-white transition-all border border-gray-700/50"
+          >
             <Printer size={18} />
           </button>
         </div>

@@ -16,6 +16,7 @@ interface SidebarProps {
   setActiveProyek: (p: string) => void;
   isOpen: boolean;
   onClose: () => void;
+  onLogout: () => void;
 }
 
 const menuUtama = [
@@ -65,7 +66,7 @@ const menuPengaturan = [
   { id: 'pengaturan', label: 'Pengaturan Usaha', icon: Settings },
 ];
 
-export default function Sidebar({ activePage, setActivePage, activeProyek, setActiveProyek, isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ activePage, setActivePage, activeProyek, setActiveProyek, isOpen, onClose, onLogout }: SidebarProps) {
   const handleNav = (id: string) => {
     setActivePage(id);
     onClose();
@@ -188,6 +189,7 @@ export default function Sidebar({ activePage, setActivePage, activeProyek, setAc
             <motion.button 
               whileHover={{ x: 5 }}
               whileTap={{ scale: 0.98 }}
+              onClick={onLogout}
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-400 hover:bg-red-900/20 transition-all mt-6 border border-transparent hover:border-red-900/30"
             >
               <LogOut size={18} />

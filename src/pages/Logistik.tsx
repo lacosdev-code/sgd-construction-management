@@ -54,7 +54,7 @@ export default function LogistikPage({ proyekId: _proyekId }: LogistikProps) {
     const status = stokSisa < 10 ? 'kritis' : stokSisa < 50 ? 'hampir_habis' : 'cukup';
     
     if (editingItem) {
-      setData(data.map(d => d.id === editingItem.id ? { ...formData, id: editingItem.id, stokSisa, status } : d));
+      setData(data.map(d => d.id === editingItem.id ? { ...d, ...formData, id: editingItem.id, stokSisa, status } : d));
     } else {
       setData([...data, { ...formData, id: Date.now(), stokSisa, status, stokAwal: 0 }]);
     }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -10,14 +10,16 @@ import KeuanganPage from './pages/Keuangan';
 import ProgressPage from './pages/Progress';
 import LogistikPage from './pages/Logistik';
 import MasterHarga from './pages/MasterHarga';
+import MasterAnalisa from './pages/MasterAnalisa';
+import LoginPage from './pages/Login';
 import Pengaturan from './pages/Pengaturan';
 import { 
   proyekList as initialProyekList, 
   itemPekerjaanList as initialItemList, 
   invoiceList as initialInvoiceList,
-  keuanganList as initialKeuanganList,
-  Proyek, ItemPekerjaan, Invoice, Keuangan 
+  keuanganList as initialKeuanganList 
 } from './data/mockData';
+import { Proyek, ItemPekerjaan, Invoice, Keuangan } from './types';
 
 function App() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -25,12 +27,36 @@ function App() {
   const [selectedProyekId, setSelectedProyekId] = useState(1);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Authentication State
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('isLoggedIn');
+      return saved !== 'false';
+    } catch (e) {
+      return true;
+    }
+  });
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    localStorage.setItem('isLoggedIn', 'true');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.setItem('isLoggedIn', 'false');
+  };
+
   // Global Data State
-  // State dengan Try-Catch untuk mencegah crash jika localStorage korup
+  // State dengan Try-Catch dan validasi tipe array untuk mencegah crash jika localStorage korup atau bukan array
   const [proyekData, setProyekData] = useState<Proyek[]>(() => {
     try {
       const saved = localStorage.getItem('proyekData');
-      return saved ? JSON.parse(saved) : initialProyekList;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+      return initialProyekList;
     } catch (e) {
       console.error("Error loading proyekData:", e);
       return initialProyekList;
@@ -40,7 +66,11 @@ function App() {
   const [itemData, setItemData] = useState<ItemPekerjaan[]>(() => {
     try {
       const saved = localStorage.getItem('itemData');
-      return saved ? JSON.parse(saved) : initialItemList;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+      return initialItemList;
     } catch (e) {
       console.error("Error loading itemData:", e);
       return initialItemList;
@@ -50,17 +80,25 @@ function App() {
   const [invoiceData, setInvoiceData] = useState<Invoice[]>(() => {
     try {
       const saved = localStorage.getItem('invoiceData');
-      return saved ? JSON.parse(saved) : initialInvoiceList;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+      return initialInvoiceList;
     } catch (e) {
       console.error("Error loading invoiceData:", e);
       return initialInvoiceList;
     }
   });
 
-  const [keuanganData, setKeuanganData] = useState<Keuangan[]>(() => {
+  const [keuanganData] = useState<Keuangan[]>(() => {
     try {
       const saved = localStorage.getItem('keuanganData');
-      return saved ? JSON.parse(saved) : initialKeuanganList;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+      return initialKeuanganList;
     } catch (e) {
       console.error("Error loading keuanganData:", e);
       return initialKeuanganList;
@@ -193,7 +231,7 @@ function App() {
       case 'master-harga':
         return <MasterHarga />;
       case 'master-analisa':
-        return <MasterHarga />; // Temporary fallback
+        return <MasterAnalisa />;
       case 'pengaturan':
         return <Pengaturan />;
       default:
@@ -206,6 +244,10 @@ function App() {
     }
   };
 
+  if (!isLoggedIn) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
   return (
     <div className="flex h-screen bg-[#0a0a0b] text-gray-100 overflow-hidden font-sans selection:bg-green-500/30">
       {/* Sidebar */}
@@ -216,6 +258,7 @@ function App() {
         setActiveProyek={setActiveProyek}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        onLogout={handleLogout}
       />
 
       {/* Main Content */}
